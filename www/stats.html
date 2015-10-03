@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.ico.gif">
+    <title>Expanse Proxy</title>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
+    <script type="text/javascript" src="bignumber.min.js"></script>
+    <script type="text/javascript" src="web3-light.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header clearfix">
+            <nav class="navbar navbar-inverse">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <h3 class="text-muted"><img src="exp.png" height="42" width="38"> Expanse Proxy</h3>
+                    </div>
+                    <div>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                            <li><a href="/settings.html"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+                            <li><a href="/server.html"><span class="glyphicon glyphicon-dashboard"></span> Upstream</a></li>
+                            <li class="active"><a href="/stats.html"><span class="glyphicon glyphicon-stats"></span> Stats</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div id="alert" class="alert alert-danger hide" role="alert">
+            <strong>An error occured while polling proxy state.</strong> Make sure proxy is running.
+        </div>
+
+        <br>
+        <div class="col-md-2 text-center" style="width:25%;">
+            <div class="panel panel-info">
+                <div data-toggle="tooltip" data-placement="top" title="Local Hashrate" class="panel-heading">
+                    <h3 class="panel-title">Hashrate</h3>
+                </div>
+                <div class="panel-body">
+                    <h4 id="getHashrate"></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2 text-center" style="width:25%;">
+            <div class="panel panel-primary">
+                <div data-toggle="tooltip" data-placement="top" title="Current Difficulty" class="panel-heading">
+                    <h3 class="panel-title">Difficulty</h3>
+                </div>
+                <div class="panel-body">
+                    <h4 id="difficulty"></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2 text-center" style="width:25%;">
+            <div class="panel panel-warning">
+                <div data-toggle="tooltip" data-placement="top" title="Last Block Number" class="panel-heading">
+                    <h3 class="panel-title">Last Block</h3>
+                </div>
+                <div class="panel-body">
+                    <h4 id="latestBlock"></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2 text-center" style="width:25%;">
+            <div class="panel panel-success">
+                <div data-toggle="tooltip" data-placement="top" title="Time Since Latest Block" class="panel-heading">
+                    <h3 class="panel-title">Last Block</h3>
+                </div>
+                <div class="panel-body">
+                    <h4 id="latestBlockTimestamp"></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="jumbotron">
+            <h5>Latest Block Hash: <strong id="latestBlockHash"></strong></h5>
+            <h5>Parent Block Hash: <strong id="parentHash"></strong></h5>
+            <h5>State Root: <strong id="stateRoot"></strong></h5>
+            <h5>Latest Block Miner: <strong id="miner"></strong></h5>
+            <h5>Nonce: <strong id="nonce"></strong></h5>
+            <h5>Gas Limit: <strong id="gasLimit"></strong></h5>
+            <h5>Gas Used: <strong id="gasUsed"></strong></h5>
+            <h5>Size: <strong id="size"></strong></h5>
+            <h5>Extra Data: <strong id="extraData"></strong></h5>
+        </div>
+        <a name="stats"></a>
+        <div id="stats"></div>
+    </div>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <p class="text-muted text-center">Please donate to <a href="https://github.com/sammy007" target="_blank"><b>sammy007</b></a> for the work on this project ETH: <code>0xb85150eb365e7df0941f0cf08235f987ba91506a</code></p>
+        </div>
+    </footer>
+    <script type="text/javascript">
+        web3.setProvider(new web3.providers.HttpProvider('http://127.0.0.1:9656'));
+
+        var hashrate = web3.eth.hashrate;
+
+        web3.eth.getBlock('latest', function(error, result) {
+            if (!error) {
+                document.getElementById('difficulty').innerHTML = result.difficulty / 1000000000;
+                document.getElementById('latestBlock').innerHTML = result.number;
+                document.getElementById('latestBlockTimestamp').innerHTML = moment.unix(result.timestamp, "h:mm:ss").fromNow();
+                document.getElementById('gasLimit').innerHTML = result.gasLimit;
+                document.getElementById('gasUsed').innerHTML = result.gasUsed;
+                document.getElementById('latestBlockHash').innerHTML = result.hash;
+                document.getElementById('parentHash').innerHTML = result.parentHash;
+                document.getElementById('size').innerHTML = result.size;
+                document.getElementById('extraData').innerHTML = result.extraData;
+                document.getElementById('miner').innerHTML = result.miner;
+                document.getElementById('nonce').innerHTML = result.nonce;
+                document.getElementById('stateRoot').innerHTML = result.stateRoot;
+                console.log(result)
+            } else
+                console.error(error);
+        });
+
+        document.getElementById('getHashrate').innerHTML = hashrate;
+
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+</body>
+
+</html>
