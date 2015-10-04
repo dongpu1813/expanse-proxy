@@ -115,7 +115,12 @@
             if (!error) {
                 document.getElementById('difficulty').innerHTML = result.difficulty / 1000000000;
                 document.getElementById('latestBlock').innerHTML = result.number;
-                document.getElementById('latestBlockTimestamp').innerHTML = moment.unix(result.timestamp, "h:mm:ss").fromNow();
+                var time = new Date().getTime() / 1000;
+                var diff = Math.floor(time - result.timestamp);
+                if(diff < 60) {
+                document.getElementById('latestBlockTimestamp').innerHTML = Math.round(diff) + ' seconds ago';
+                } else
+                document.getElementById('latestBlockTimestamp').innerHTML = moment.duration(Math.round(diff), 's').humanize() + ' ago';
                 document.getElementById('gasLimit').innerHTML = result.gasLimit;
                 document.getElementById('gasUsed').innerHTML = result.gasUsed;
                 document.getElementById('latestBlockHash').innerHTML = result.hash;
