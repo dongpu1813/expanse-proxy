@@ -9,7 +9,7 @@ Expanse mining proxy with web-interface.
 * Easy detection of sick rigs
 * Daemon failover list
 
-![Demo](https://raw.githubusercontent.com/sammy007/ether-proxy/master/proxy.png)
+![Demo](https://cloud.githubusercontent.com/assets/4833541/10272128/9efc7310-6b66-11e5-868c-4b983a4de891.jpg)
 
 ### Installation
 
