@@ -4,22 +4,22 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="favicon.ico.gif">
+    <link rel="icon" href="img/favicon.ico.gif">
     <title>Expanse Proxy</title>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
-    <script src="handlebars-intl.min.js"></script>
-    <link href="style.css" rel="stylesheet">
-    <script src="script.js"></script>
+    <script src="js/handlebars-intl.min.js"></script>
+    <link href="css/style.css" rel="stylesheet">
+    <script src="js/script.js"></script>
   </head>
   <body>
     <a href="https://github.com/nrpatten/expanse-proxy" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
     <script id="stats-template" type="text/x-handlebars-template">
     <div class="row marketing">
       <div class="panel panel-default">
-        <div class="panel-heading"><b>Proxy Stats </b><span class="glyphicon glyphicon-stats"></span></div>
+        <div class="panel-heading text-center"><b>Proxy Stats </b><span class="glyphicon glyphicon-stats"></span></div>
         <div class="panel-body">
           <div class="col-lg-6">
             <dl class="dl-horizontal">
@@ -48,14 +48,13 @@
         </div>
       </div>
       <div class="panel panel-default">
-        <div class="panel-heading"><b>Miners </b><span class="glyphicon glyphicon-user"></span></div>
+        <div class="panel-heading text-center"><b>Miners </b><span class="glyphicon glyphicon-user"></span></div>
         <div class="panel-body">
           <div class="col-lg-12">
-            <table class="table table-bordered">
+            <table class="table table-bordered text-center">
               <tr>
                 <th>ID</th>
-                <th>IP</th>
-                <th>HR</th>
+                <th>Hash Rate</th>
                 <th>Last Share</th>
                 <th>Accepted</th>
                 <th>Rejected</th>
@@ -73,7 +72,6 @@
                     {{/if}}
                     {{/if}}
                     <td>{{name}}</td>
-                    <td>Hidden</td>
                     <td>{{formatNumber hashrate}}</td>
                     <td>{{formatRelative lastBeat}}</td>
                     <td>{{formatNumber validShares}}</td>
@@ -95,7 +93,7 @@
         <nav class="navbar navbar-inverse">
           <div class="container-fluid">
             <div class="navbar-header">
-              <h3 class="text-muted"><img src="exp.png" height="42" width="38"> Expanse Proxy</h3>
+              <h3 class="text-muted"><img src="img/exp.png" height="42" width="38"> Expanse Proxy</h3>
             </div>
             <div>
               <ul class="nav navbar-nav navbar-right">

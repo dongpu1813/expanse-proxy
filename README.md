@@ -16,11 +16,11 @@ Expanse mining proxy with web-interface.
 Dependencies:
 
   * go >= 1.4
-  * geth
+  * gexp
 
 GOPATH:
- * Add to your .bashrc
-  * mkdir gosrc
+ * mkdir /home/user/gosrc
+  * Run and Add to your .bashrc
   * export GOPATH=/home/user/gosrc
 
 Install required packages:
@@ -55,7 +55,7 @@ Configuration is self-describing, just copy *config.example.json* to *config.jso
 * Report average luck
 * Report luck per rig
 * Add support for pools
-* Maybe add more stats
+* ~~Maybe add more stats~~
 * Maybe add charts
 
 ### Donations

@@ -22,3 +22,5 @@ function refreshStats(template) {
 		$("#alert").removeClass('hide');
 	});
 }
+
+

@@ -1,29 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="favicon.ico.gif">
+    <link rel="icon" href="img/favicon.ico.gif">
     <title>Expanse Proxy</title>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script src="script.js"></script>
-    <script type="text/javascript" src="bignumber.min.js"></script>
-    <script type="text/javascript" src="web3-light.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/bignumber.min.js"></script>
+    <script type="text/javascript" src="js/web3-light.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
 </head>
-
 <body>
     <div class="container">
         <div class="header clearfix">
             <nav class="navbar navbar-inverse">
                 <div class="container-fluid">
                     <div class="navbar-header">
-                        <h3 class="text-muted"><img src="exp.png" height="42" width="38"> Expanse Proxy</h3>
+                        <h3 class="text-muted"><img src="img/exp.png" height="42" width="38"> Expanse Proxy</h3>
                     </div>
                     <div>
                         <ul class="nav navbar-nav navbar-right">
@@ -39,7 +36,6 @@
         <div id="alert" class="alert alert-danger hide" role="alert">
             <strong>An error occured while polling proxy state.</strong> Make sure proxy is running.
         </div>
-
         <br>
         <div class="col-md-2 text-center" style="width:25%;">
             <div class="panel panel-info">
@@ -51,7 +47,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-2 text-center" style="width:25%;">
             <div class="panel panel-primary">
                 <div data-toggle="tooltip" data-placement="top" title="Current Difficulty" class="panel-heading">
@@ -62,7 +57,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-2 text-center" style="width:25%;">
             <div class="panel panel-warning">
                 <div data-toggle="tooltip" data-placement="top" title="Last Block Number" class="panel-heading">
@@ -73,20 +67,20 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-2 text-center" style="width:25%;">
             <div class="panel panel-success">
                 <div data-toggle="tooltip" data-placement="top" title="Time Since Latest Block" class="panel-heading">
-                    <h3 class="panel-title">Last Block</h3>
+                    <h3 class="panel-title">Last Block Time</h3>
                 </div>
                 <div class="panel-body">
                     <h4 id="latestBlockTimestamp"></h4>
                 </div>
             </div>
         </div>
-
         <div class="clearfix"></div>
-        <div class="jumbotron">
+        <div class="panel panel-default">
+          <div class="panel-heading text-center"><b>Block Stats </b><span class="glyphicon glyphicon-th-large"></span></div>
+          <div class="panel-body text-center">
             <h5>Latest Block Hash: <strong id="latestBlockHash"></strong></h5>
             <h5>Parent Block Hash: <strong id="parentHash"></strong></h5>
             <h5>State Root: <strong id="stateRoot"></strong></h5>
@@ -96,10 +90,16 @@
             <h5>Gas Used: <strong id="gasUsed"></strong></h5>
             <h5>Size: <strong id="size"></strong></h5>
             <h5>Extra Data: <strong id="extraData"></strong></h5>
+          </div>
         </div>
-        <a name="stats"></a>
-        <div id="stats"></div>
-    </div>
+        <div class="clearfix"></div>
+        <div class="panel panel-default">
+          <div class="panel-heading text-center"><b>Price </b><span class="glyphicon glyphicon-btc"></span></div>
+          <div class="panel-body text-center">
+            <h5>BTC/EXP: <strong id="BTC"></strong></h5>
+            <h5>USD/EXP: <strong id="USD"></strong></h5>
+          </div>
+        </div>
     </div>
     <footer class="footer">
         <div class="container">
@@ -107,8 +107,11 @@
         </div>
     </footer>
     <script type="text/javascript">
-        web3.setProvider(new web3.providers.HttpProvider('http://127.0.0.1:9656'));
+        web3.setProvider(new web3.providers.HttpProvider('http://localhost:9656'));
 
+        btc_exp = null;
+        usd_btc = null;
+        expPrice = null;
         var hashrate = web3.eth.hashrate;
 
         web3.eth.getBlock('latest', function(error, result) {
@@ -117,10 +120,17 @@
                 document.getElementById('latestBlock').innerHTML = result.number;
                 var time = new Date().getTime() / 1000;
                 var diff = Math.floor(time - result.timestamp);
+<<<<<<< HEAD
+                if (diff < 60) {
+                    document.getElementById('latestBlockTimestamp').innerHTML = Math.round(diff) + ' seconds ago';
+                } else
+                    document.getElementById('latestBlockTimestamp').innerHTML = moment.duration(Math.round(diff), 's').humanize() + ' ago';
+=======
                 if(diff < 60) {
                 document.getElementById('latestBlockTimestamp').innerHTML = Math.round(diff) + ' seconds ago';
                 } else
                 document.getElementById('latestBlockTimestamp').innerHTML = moment.duration(Math.round(diff), 's').humanize() + ' ago';
+>>>>>>> 545e958a26424496613999bedd6f968557e855da
                 document.getElementById('gasLimit').innerHTML = result.gasLimit;
                 document.getElementById('gasUsed').innerHTML = result.gasUsed;
                 document.getElementById('latestBlockHash').innerHTML = result.hash;
@@ -130,17 +140,25 @@
                 document.getElementById('miner').innerHTML = result.miner;
                 document.getElementById('nonce').innerHTML = result.nonce;
                 document.getElementById('stateRoot').innerHTML = result.stateRoot;
-                console.log(result)
+                //document.getElementById('Test').innerHTML = Math.round(result.totalDifficulty / result.timestamp).toFixed(2);
+                console.log(result);
             } else
                 console.error(error);
         });
 
         document.getElementById('getHashrate').innerHTML = hashrate;
 
+        $.getJSON("https://poloniex.com/public?command=returnTicker").done(function(data) {
+            btc_exp = data["BTC_EXP"]["last"];
+            usd_btc = data["USDT_BTC"]["last"];
+            expPrice = btc_exp * usd_btc;
+            document.getElementById('BTC').innerHTML = btc_exp;
+            document.getElementById('USD').innerHTML = '$' + expPrice.toFixed(8);
+        });
+
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()
-        })
+        });
     </script>
 </body>
-
 </html>
