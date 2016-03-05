@@ -2,14 +2,20 @@
 	"threads": 2,
 
 	"proxy": {
-		"listen": "0.0.0.0:3333",
+		"listen": "0.0.0.0:8546",
 		"clientTimeout": "3m",
-		"blockRefreshInterval": "500ms"
-    },
+		"blockRefreshInterval": "100ms",
+		"hashrateWindow": "15m",
+		"submitHashrate": false,
+		"luckWindow": "24h",
+		"largeLuckWindow": "72h"
+	},
 
 	"frontend": {
-		"listen": "0.0.0.0:8000"
-    },
+		"listen": "0.0.0.0:8080",
+		"login": "admin",
+		"password": ""
+	},
 
 	"upstreamCheckInterval": "5s",
 	"upstream": [
@@ -20,7 +26,7 @@
 		},
 		{
 			"name": "backup",
-			"url": "http://127.0.0.2:9656",
+			"url": "http://127.0.0.1:9656",
 			"timeout": "10s"
 		}
 	],

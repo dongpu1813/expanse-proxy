@@ -3,22 +3,21 @@ package main
 import (
 	"encoding/json"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
-	"time"
 
 	"./proxy"
 
+	"github.com/goji/httpauth"
 	"github.com/gorilla/mux"
 	"github.com/yvasiyarov/gorelic"
 )
 
 var cfg proxy.Config
 
-func startStratum() {
+func startProxy() {
 	if cfg.Threads > 0 {
 		runtime.GOMAXPROCS(cfg.Threads)
 		log.Printf("Running with %v threads", cfg.Threads)
@@ -34,14 +33,26 @@ func startStratum() {
 	go startFrontend(&cfg, s)
 
 	r.Handle("/miner/{diff:.+}/{id:.+}", s)
-	http.ListenAndServe(cfg.Proxy.Listen, r)
+	err := http.ListenAndServe(cfg.Proxy.Listen, r)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func startFrontend(cfg *proxy.Config, s *proxy.ProxyServer) {
 	r := mux.NewRouter()
 	r.HandleFunc("/stats", s.StatsIndex)
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./www/")))
-	http.ListenAndServe(cfg.Frontend.Listen, r)
+	var err error
+	if len(cfg.Frontend.Password) > 0 {
+		auth := httpauth.SimpleBasicAuth(cfg.Frontend.Login, cfg.Frontend.Password)
+		err = http.ListenAndServe(cfg.Frontend.Listen, auth(r))
+	} else {
+		err = http.ListenAndServe(cfg.Frontend.Listen, r)
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func startNewrelic() {
@@ -74,8 +85,7 @@ func readConfig(cfg *proxy.Config) {
 }
 
 func main() {
-	rand.Seed(time.Now().UTC().UnixNano())
 	readConfig(&cfg)
 	startNewrelic()
-	startStratum()
+	startProxy()
 }

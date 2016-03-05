@@ -2,15 +2,31 @@ package proxy
 
 import (
 	"log"
-	"math/big"
 	"strconv"
 
-	"github.com/expanse-project/go-expanse/common"
+	"../util"
 )
 
-var pow256 = common.BigPow(2, 256)
-
 func (s *ProxyServer) handleGetWorkRPC(cs *Session, diff, id string) (reply []string, errorReply *ErrorReply) {
+	t := s.currentBlockTemplate()
+	if len(t.Header) == 0 {
+		return nil, &ErrorReply{Code: -1, Message: "Work not ready"}
+	}
+	targetHex := t.Target
+
+	if !s.rpc().Pool {
+		minerDifficulty, err := strconv.ParseFloat(diff, 64)
+		if err != nil {
+			log.Printf("Invalid difficulty %v from %v@%v ", diff, id, cs.ip)
+			minerDifficulty = 5
+		}
+		targetHex = util.MakeTargetHex(minerDifficulty)
+	}
+	reply = []string{t.Header, t.Seed, targetHex}
+	return
+}
+
+func (s *ProxyServer) handleSubmitRPC(cs *Session, diff string, id string, params []string) (reply bool, errorReply *ErrorReply) {
 	miner, ok := s.miners.Get(id)
 	if !ok {
 		miner = NewMiner(id, cs.ip)
@@ -18,32 +34,13 @@ func (s *ProxyServer) handleGetWorkRPC(cs *Session, diff, id string) (reply []st
 	}
 
 	t := s.currentBlockTemplate()
-	minerDifficulty, err := strconv.ParseFloat(diff, 64)
-	if err != nil {
-		log.Println("Invalid difficulty %v from %v@%v ", diff, id, cs.ip)
-		minerDifficulty = 5
-	}
-	if len(t.Header) == 0 {
-		return nil, &ErrorReply{Code: -1, Message: "Work not ready"}
-	}
-	minerAdjustedDifficulty := int64(minerDifficulty * 1000000 * 100)
-	difficulty := big.NewInt(minerAdjustedDifficulty)
-	diff1 := new(big.Int).Div(pow256, difficulty)
-	diffBytes := string(common.ToHex(diff1.Bytes()))
-
-	reply = []string{t.Header, t.Seed, diffBytes}
+	reply = miner.processShare(s, t, diff, params)
 	return
 }
 
-func (s *ProxyServer) handleSubmitRPC(cs *Session, diff string, id string, params []string) (reply bool, errorReply *ErrorReply) {
-	miner, ok := s.miners.Get(id)
-	if !ok {
-		return false, &ErrorReply{Code: -1, Message: "Unknown miner"}
-	}
-
-	t := s.currentBlockTemplate()
-	reply = miner.processShare(s, t, diff, params)
-	return
+func (s *ProxyServer) handleSubmitHashrate(cs *Session, req *JSONRpcReq) bool {
+	reply, _ := s.rpc().SubmitHashrate(req.Params)
+	return reply
 }
 
 func (s *ProxyServer) handleUnknownRPC(cs *Session, req *JSONRpcReq) *ErrorReply {

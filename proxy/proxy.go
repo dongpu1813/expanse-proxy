@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -16,15 +17,18 @@ import (
 )
 
 type ProxyServer struct {
-	config        *Config
-	miners        MinersMap
-	blockTemplate atomic.Value
-	upstream      int32
-	upstreams     []*rpc.RPCClient
-	validBlocks   uint64
-	invalidBlocks uint64
-
-	timeout time.Duration
+	config          *Config
+	miners          MinersMap
+	blockTemplate   atomic.Value
+	upstream        int32
+	upstreams       []*rpc.RPCClient
+	hashrateWindow  time.Duration
+	timeout         time.Duration
+	roundShares     int64
+	blocksMu        sync.RWMutex
+	blockStats      map[int64]float64
+	luckWindow      int64
+	luckLargeWindow int64
 }
 
 type Session struct {
@@ -37,12 +41,17 @@ const (
 )
 
 func NewEndpoint(cfg *Config) *ProxyServer {
-	proxy := &ProxyServer{config: cfg}
+	proxy := &ProxyServer{config: cfg, blockStats: make(map[int64]float64)}
 
 	proxy.upstreams = make([]*rpc.RPCClient, len(cfg.Upstream))
 	for i, v := range cfg.Upstream {
-		proxy.upstreams[i] = rpc.NewRPCClient(v.Name, v.Url, v.Timeout)
-		log.Printf("Upstream: %s => %s", v.Name, v.Url)
+		client, err := rpc.NewRPCClient(v.Name, v.Url, v.Timeout, v.Pool)
+		if err != nil {
+			log.Fatal(err)
+		} else {
+			proxy.upstreams[i] = client
+			log.Printf("Upstream: %s => %s", v.Name, v.Url)
+		}
 	}
 	log.Printf("Default upstream: %s => %s", proxy.rpc().Name, proxy.rpc().Url)
 
@@ -50,6 +59,14 @@ func NewEndpoint(cfg *Config) *ProxyServer {
 
 	timeout, _ := time.ParseDuration(cfg.Proxy.ClientTimeout)
 	proxy.timeout = timeout
+
+	hashrateWindow, _ := time.ParseDuration(cfg.Proxy.HashrateWindow)
+	proxy.hashrateWindow = hashrateWindow
+
+	luckWindow, _ := time.ParseDuration(cfg.Proxy.LuckWindow)
+	proxy.luckWindow = int64(luckWindow / time.Millisecond)
+	luckLargeWindow, _ := time.ParseDuration(cfg.Proxy.LargeLuckWindow)
+	proxy.luckLargeWindow = int64(luckLargeWindow / time.Millisecond)
 
 	proxy.blockTemplate.Store(&BlockTemplate{})
 	proxy.fetchBlockTemplate()
@@ -67,6 +84,13 @@ func NewEndpoint(cfg *Config) *ProxyServer {
 			case <-refreshTimer.C:
 				proxy.fetchBlockTemplate()
 				refreshTimer.Reset(refreshIntv)
+			}
+		}
+	}()
+
+	go func() {
+		for {
+			select {
 			case <-checkTimer.C:
 				proxy.checkUpstreams()
 				checkTimer.Reset(checkIntv)
@@ -87,7 +111,11 @@ func (s *ProxyServer) checkUpstreams() {
 	backup := false
 
 	for i, v := range s.upstreams {
-		if v.Check() && !backup {
+		ok, err := v.Check()
+		if err != nil {
+			log.Printf("Upstream %v didn't pass check: %v", v.Name, err)
+		}
+		if ok && !backup {
 			candidate = int32(i)
 			backup = true
 		}
@@ -167,7 +195,11 @@ func (cs *Session) handleMessage(s *ProxyServer, r *http.Request, req *JSONRpcRe
 		}
 		cs.sendResult(req.Id, &reply)
 	case "eth_submitHashrate":
-		cs.sendResult(req.Id, true)
+		reply := true
+		if s.config.Proxy.SubmitHashrate {
+			reply = s.handleSubmitHashrate(cs, req)
+		}
+		cs.sendResult(req.Id, reply)
 	default:
 		errReply := s.handleUnknownRPC(cs, req)
 		cs.sendError(req.Id, errReply)
