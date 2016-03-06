@@ -25,24 +25,38 @@
             <dl class="dl-horizontal">
               <dt>Block height</dt>
               <dd><span class="badge alert-primary">{{height}}</span></dd>
-              <dt>Hashrate</dt>
-              <dd><span class="badge alert-info">{{formatNumber hashrate}}</span></strong></dd>
+              <dt>Hashrate / 24h</dt>
+              <dd><span class="badge alert-info">{{formatNumber hashrate}}</span> / <span class="badge alert-info">{{formatNumber hashrate24h}}</span></strong></dd>
               <dt>Total Miners</dt>
-              <dd><span class="badge alert-info">{{totalMiners}}</span></strong></dd>
+              <dd><span class="badge alert-info">{{totalMiners}}</span></dd>
               <dt>Miners Online</dt>
-              <dd><span class="badge alert-success">{{totalOnline}}</span></strong></dd>
+              <dd><span class="badge alert-success">{{totalOnline}}</span></dd>
+              {{#if current.lastSubmissionAt}}
+              <dt>Last Mined Blcok</dt>
+              <dd><span class="badge alert-info">{{formatRelative current.lastSubmissionAt now=now}}</span></dd>
+              {{/if}}
+              <dt>Accepted Blocks</dt>
+              <dd><span class="badge alert-success">{{formatNumber current.accepts}}</span></dd>
+              <dt>Rejected Blocks</dt>
+              <dd><span class="badge alert-danger">{{formatNumber current.rejects}}</span></dd>
             </dl>
           </div>
           <div class="col-lg-6">
             <dl class="dl-horizontal">
               <dt>Current Difficulty</strong>
               <dd><span class="badge alert-primary">{{formatNumber diff}}</span></dd>
-              <dt>Accepted Blocks</dt>
-              <dd><span class="badge alert-success">{{formatNumber validBlocks}}</span></strong></dd>
-              <dt>Rejected Blocks</dt>
-              <dd><span class="badge alert-danger">{{formatNumber invalidBlocks}}</span></strong></dd>
+              <dt>Blocks {{luck.window}}</strong>
+              <dd><span class="badge alert-success">{{formatNumber luck.blocksCount}}</span></dd>
+              <dt>Shares/Diff {{luck.window}}</strong>
+              <dd><span class="badge alert-success">{{formatNumber luck.variance style="percent" minimumFractionDigits=2 maximumFractionDigits=2}}</span></dd>
+              <dt>Blocks {{luck.largeWindow}}</strong>
+              <dd><span class="badge alert-success">{{formatNumber luck.totalBlocksCount}}</span></dd>
+              <dt>Shares/Diff {{luck.largeWindow}}</strong>
+              <dd><span class="badge alert-success">{{formatNumber luck.totalVariance style="percent" minimumFractionDigits=2 maximumFractionDigits=2}}</span></dd>
+              <dt>Next Epoch</strong>
+              <dd><span class="badge alert-success">{{formatRelative nextEpoch now=now units="hour"}}</span></dd>
               <dt>Miners Timed Out</dt>
-              <dd><span class="badge alert-danger">{{timedOut}}</span></strong></dd>
+              <dd><span class="badge alert-danger">{{formatNumber timedOut}}</span></dd>
             </dl>
           </div>
         </div>
@@ -73,11 +87,11 @@
                     {{/if}}
                     <td>{{name}}</td>
                     <td>{{formatNumber hashrate}}</td>
-                    <td>{{formatRelative lastBeat}}</td>
+                    <td>{{formatRelative lastBeat now=../now}}</td>
                     <td>{{formatNumber validShares}}</td>
                     <td><strong>{{formatNumber invalidShares}}</strong></td>
-                    <td>{{formatNumber validBlocks}}</td>
-                    <td>{{formatNumber invalidBlocks}}</td>
+                    <td>{{formatNumber accepts}}</td>
+                    <td>{{formatNumber rejects}}</td>
                   </tr>
                   {{/each}}
                 </table>

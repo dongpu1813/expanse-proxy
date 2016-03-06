@@ -8,41 +8,10 @@
     <title>Expanse Proxy</title>
     <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ff.kis.scr.kaspersky-labs.com/FAC70AFA-5DA2-AB4B-8CC5-882C3A7066DC/main.js" charset="UTF-8"></script><script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.0/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
-    <script src="js/handlebars-intl.min.js"></script>
-    <script src="js/script.js"></script>
 </head>
 <body>
-    <script id="stats-template" type="text/x-handlebars-template">
-        <div class="row marketing">
-            <div class="panel panel-default">
-                <div class="panel-heading text-center"><b>Settings </b><span class="glyphicon glyphicon-cog"></span></div>
-                <div class="panel-body">
-                    <div class="col-lg-12">
-                        <dl class="dl-horizontal">
-                            <dt>Miner Settings</dt>
-                            <dd><code class="badge alert-info">ethminer -G -F {{url}}</code></dd>
-                            <dd><code class="badge alert-info">Where <b>DIFF</b> is your H/s converted to diff and <b>ID</b> is your miners name.</code></dd>
-                            <dd><code class="badge alert-warning">Example: ethminer -G -F http://127.0.0.1:3333/miner/20/Miner1</code></dd>
-                        </dl>
-                    </div>
-                    <div class="col-lg-12">
-                        <p>
-                            <form class="margin-bottom" method="get" action="settings.html">
-                                <div class="input-group add-on">
-                                    <input id="num" class="form-control" type="text" placeholder="Paste H/s Here To Convert It To Diff" value="" />
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-primary" onclick="convertIt()">Convert</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </p>
-                    </div>
-                </div>
-            </div>
-    </script>
     <div class="container">
         <div class="header clearfix">
             <nav class="navbar navbar-inverse">
@@ -60,6 +29,39 @@
                     </div>
                 </div>
             </nav>
+        </div>
+        <div class="row marketing">
+            <div class="panel panel-default">
+                <div class="panel-heading text-center"><b>Settings </b><span class="glyphicon glyphicon-cog"></span></div>
+                <div class="panel-body">
+                    <div class="col-lg-12">
+                        <dl class="dl-horizontal">
+                            <dt>Miner Settings</dt>
+                            <dd><code class="badge alert-info">ethminer -G -F http://127.0.0.1:3333/miner/DIFF/ID</code></dd>
+                            <dd><code class="badge alert-info">Where <b>DIFF</b> is your H/s converted to diff and <b>ID</b> is your miners name.</code></dd>
+                            <dd><code class="badge alert-warning">Example: ethminer -G -F http://127.0.0.1:3333/miner/20/Miner1</code></dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading text-center"><b>HashRate Converter </b><span class="glyphicon glyphicon-star"></span></div>
+                    <div class="panel-body">
+                        <div class="col-lg-12">
+                            <p>
+                                <form class="margin-bottom" method="get" action="settings.html">
+                                    <div class="input-group add-on">
+                                        <input id="num" class="form-control" type="text" placeholder="Paste H/s Here To Convert It To Diff" value="" />
+                                        <div class="input-group-btn">
+                                            <button class="btn btn-primary" onclick="convertIt()">Convert</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id="alert" class="alert alert-danger hide" role="alert">
             <strong>An error occured while polling proxy state.</strong> Make sure proxy is running.
