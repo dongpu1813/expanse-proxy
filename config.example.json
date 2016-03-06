@@ -2,7 +2,7 @@
 	"threads": 2,
 
 	"proxy": {
-		"listen": "0.0.0.0:8546",
+		"listen": "0.0.0.0:3333",
 		"clientTimeout": "3m",
 		"blockRefreshInterval": "100ms",
 		"hashrateWindow": "15m",
