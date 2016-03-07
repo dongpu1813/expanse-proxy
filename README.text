@@ -1,18 +1,19 @@
 Expanse Proxy Setup
 
-1: Donwload gexp.
-1.a: setup start gexp with gexp --port "42786" --rpc --rpcaddr "127.0.0.1" --rpcport "9656" --rpccorsdomain "*" console
-1.b: Wait for gexp too sync.
+1: Donwload gexp latest build https://github.com/expanse-org/gexp-builds
+1.a: Start gexp with ( gexp account new ) enter password for new account x 2. quit gexp
+1.b: Start gexp with ( gexp --port "42786" --rpc --rpcaddr "127.0.0.1" --rpcport "9656" --rpccorsdomain "*" console )
+1.c: Wait for gexp too sync.
 
 2: Copy/Rename config.example.json to config.json
-2.a: Start the expanse-proxy.exe or expanse-proxy for Linux builds.
+2.a: Start the expanse-proxy.exe or ( expanse-proxy config.json ) for Linux builds.
 
 3: Point your ethminer to ethminer -G -F http://127.0.0.1:3333/miner/DIFF/ID
 3.a: Where DIFF is your H/s converted to diff and ID is your miners name.
 3.b: Example: ethminer -G -F http://127.0.0.1:3333/miner/20/Miner1
 
 4: Open your Web Browser and point it too  http://127.0.0.1:8080 Username: admin Password: is blank by default.
-4.1: You can change the Username and Password in the config.json
+4.a: You can change the Username and Password in the config.json
 
 Done... Have Fun...
 
