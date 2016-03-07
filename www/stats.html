@@ -39,7 +39,7 @@
         <br>
         <div class="col-md-2 text-center" style="width:25%;">
             <div class="panel panel-info">
-                <div data-toggle="tooltip" data-placement="top" title="Local Hashrate" class="panel-heading">
+                <div data-toggle="tooltip" data-placement="top" title="NetWork Hashrate" class="panel-heading">
                     <h3 class="panel-title">Hashrate</h3>
                 </div>
                 <div class="panel-body">
@@ -107,7 +107,7 @@
         </div>
     </footer>
     <script type="text/javascript">
-        web3.setProvider(new web3.providers.HttpProvider('http://127.0.0.1:9656'));
+        web3.setProvider(new web3.providers.HttpProvider('http://162.243.239.186:9656'));
 
         btc_exp = null;
         usd_btc = null;
@@ -116,7 +116,7 @@
 
         web3.eth.getBlock('latest', function(error, result) {
             if (!error) {
-                document.getElementById('difficulty').innerHTML = result.difficulty / 1000000000;
+                document.getElementById('difficulty').innerHTML = (result.difficulty / 1000000000000).toFixed(2) + ' TH';
                 document.getElementById('latestBlock').innerHTML = result.number;
                 var time = new Date().getTime() / 1000;
                 var diff = Math.floor(time - result.timestamp);
@@ -126,11 +126,11 @@
                     document.getElementById('latestBlockTimestamp').innerHTML = moment.duration(Math.round(diff), 's').humanize() + ' ago';
                 document.getElementById('gasLimit').innerHTML = result.gasLimit;
                 document.getElementById('gasUsed').innerHTML = result.gasUsed;
-                document.getElementById('latestBlockHash').innerHTML = result.hash;
-                document.getElementById('parentHash').innerHTML = result.parentHash;
+                document.getElementById('latestBlockHash').innerHTML = '<a href=\'http://www.expanse.tech/explorer/block/'+ result.hash +'\'>'+ result.hash +'</a>';
+                document.getElementById('parentHash').innerHTML = '<a href=\'http://www.expanse.tech/explorer/block/'+ result.parentHash +'\'>'+ result.parentHash +'</a>';
                 document.getElementById('size').innerHTML = result.size;
                 document.getElementById('extraData').innerHTML = result.extraData;
-                document.getElementById('miner').innerHTML = result.miner;
+                document.getElementById('miner').innerHTML = '<a href=\'http://www.expanse.tech/explorer/account/'+ result.miner +'\'>'+ result.miner +'</a>';
                 document.getElementById('nonce').innerHTML = result.nonce;
                 document.getElementById('stateRoot').innerHTML = result.stateRoot;
                 console.log(result);
@@ -138,7 +138,7 @@
                 console.error(error);
         });
 
-        document.getElementById('getHashrate').innerHTML = hashrate;
+        document.getElementById('getHashrate').innerHTML = (hashrate / 100000000000000000).toFixed(2) + ' GH/s';
 
         $.getJSON("https://poloniex.com/public?command=returnTicker").done(function(data) {
             btc_exp = data["BTC_EXP"]["last"];
