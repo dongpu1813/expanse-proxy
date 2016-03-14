@@ -1,6 +1,6 @@
 $(document).ready(function() {
     var web3 = new Web3();
-    web3.setProvider(new web3.providers.HttpProvider('http://162.243.239.186:9656'));
+    web3.setProvider(new web3.providers.HttpProvider('http://127.0.0.1:9656'));
 
     btc_exp = null;
     usd_btc = null;
