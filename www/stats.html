@@ -11,8 +11,9 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/bignumber.min.js"></script>
-    <script type="text/javascript" src="js/web3-light.js"></script>
+    <script type="text/javascript" src="js/web3.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+    <script type="text/javascript" src="js/stats.js"></script>
 </head>
 <body>
     <div class="container">
@@ -39,7 +40,7 @@
         <br>
         <div class="col-md-2 text-center" style="width:25%;">
             <div class="panel panel-info">
-                <div data-toggle="tooltip" data-placement="top" title="NetWork Hashrate" class="panel-heading">
+                <div data-toggle="tooltip" data-placement="top" title="Current Hashrate" class="panel-heading">
                     <h3 class="panel-title">Hashrate</h3>
                 </div>
                 <div class="panel-body">
@@ -81,6 +82,7 @@
         <div class="panel panel-default">
           <div class="panel-heading text-center"><b>Block Stats </b><span class="glyphicon glyphicon-th-large"></span></div>
           <div class="panel-body text-center">
+          <div class="well well-sm" style="margin-bottom:0px;">
             <h5>Latest Block Hash: <strong id="latestBlockHash"></strong></h5>
             <h5>Parent Block Hash: <strong id="parentHash"></strong></h5>
             <h5>State Root: <strong id="stateRoot"></strong></h5>
@@ -91,66 +93,30 @@
             <h5>Size: <strong id="size"></strong></h5>
             <h5>Extra Data: <strong id="extraData"></strong></h5>
           </div>
+          </div>
         </div>
         <div class="clearfix"></div>
         <div class="panel panel-default">
-          <div class="panel-heading text-center"><b>Price </b><span class="glyphicon glyphicon-btc"></span></div>
+          <div class="panel-heading text-center"><b>Poloniex Price / EXP Balance</b> <span style="font-size: 12px;"  class="glyphicon glyphicon-btc"></span></div>
           <div class="panel-body text-center">
-            <h5>BTC/EXP: <strong id="BTC"></strong></h5>
-            <h5>USD/EXP: <strong id="USD"></strong></h5>
+            <div class="well well-sm" style="margin-bottom:5px;">
+            <h5 style="margin-bottom:0px; margin-top:0px; padding:4px;">BitCoin / Expanse: <span style="font-size: 12px; color: orange;" class="glyphicon glyphicon-btc"></span><strong id="BTC"></strong></h5>
+            <h5 style="margin-bottom:0px; margin-top:0px; padding:4px;">USD / Expanse: <span style="font-size: 12px; color: green;" class="glyphicon glyphicon-usd"></span><strong id="USD"></strong></h5>
+            </div>
+            <div class="well well-sm" style="margin-bottom:0px;">
+            <h5 style="margin-bottom:0px; margin-top:0px; padding:4px;">Balance Expanse: <b><strong id="getBalance" style="color: green;"></strong></b></h5>
+            <h5 style="margin-bottom:0px; margin-top:0px; padding:4px;">Balance BitCoin: <span style="font-size: 12px; color: orange;" class="glyphicon glyphicon-btc"></span><strong id="EXP-BTC"></strong></h5>
+            <h5 style="margin-bottom:0px; margin-top:0px; padding:4px;">Balance USD: <span style="font-size: 12px; color: green;" class="glyphicon glyphicon-usd"></span><strong id="EXP-USD"></strong></h5>
+            </div>
           </div>
         </div>
     </div>
     <footer class="footer">
         <div class="container">
-            <p class="text-muted text-center">Please donate to <a href="https://github.com/sammy007" target="_blank"><b>sammy007</b></a> for the work on this project ETH: <code>0xb85150eb365e7df0941f0cf08235f987ba91506a</code></p>
+            <div class="text-center">
+                <p>Version: <span id="getVersion" class="text-muted"></span> - PeerCount: <span id="getPeers"class="text-muted"></span></p>
+            </div>
         </div>
     </footer>
-    <script type="text/javascript">
-        web3.setProvider(new web3.providers.HttpProvider('http://127.0.0.1:9656'));
-
-        btc_exp = null;
-        usd_btc = null;
-        expPrice = null;
-        var hashrate = web3.eth.hashrate;
-
-        web3.eth.getBlock('latest', function(error, result) {
-            if (!error) {
-                document.getElementById('difficulty').innerHTML = (result.difficulty / 1000000000000).toFixed(2) + ' TH';
-                document.getElementById('latestBlock').innerHTML = result.number;
-                var time = new Date().getTime() / 1000;
-                var diff = Math.floor(time - result.timestamp);
-                if (diff < 60) {
-                    document.getElementById('latestBlockTimestamp').innerHTML = Math.round(diff) + ' seconds ago';
-                } else
-                    document.getElementById('latestBlockTimestamp').innerHTML = moment.duration(Math.round(diff), 's').humanize() + ' ago';
-                document.getElementById('gasLimit').innerHTML = result.gasLimit;
-                document.getElementById('gasUsed').innerHTML = result.gasUsed;
-                document.getElementById('latestBlockHash').innerHTML = '<a href=\'http://www.expanse.tech/explorer/block/'+ result.hash +'\'>'+ result.hash +'</a>';
-                document.getElementById('parentHash').innerHTML = '<a href=\'http://www.expanse.tech/explorer/block/'+ result.parentHash +'\'>'+ result.parentHash +'</a>';
-                document.getElementById('size').innerHTML = result.size;
-                document.getElementById('extraData').innerHTML = result.extraData;
-                document.getElementById('miner').innerHTML = '<a href=\'http://www.expanse.tech/explorer/account/'+ result.miner +'\'>'+ result.miner +'</a>';
-                document.getElementById('nonce').innerHTML = result.nonce;
-                document.getElementById('stateRoot').innerHTML = result.stateRoot;
-                console.log(result);
-            } else
-                console.error(error);
-        });
-
-        document.getElementById('getHashrate').innerHTML = (hashrate / 100000000000000000).toFixed(2) + ' GH/s';
-
-        $.getJSON("https://poloniex.com/public?command=returnTicker").done(function(data) {
-            btc_exp = data["BTC_EXP"]["last"];
-            usd_btc = data["USDT_BTC"]["last"];
-            expPrice = btc_exp * usd_btc;
-            document.getElementById('BTC').innerHTML = btc_exp;
-            document.getElementById('USD').innerHTML = '$' + expPrice.toFixed(8);
-        });
-
-        $(function() {
-            $('[data-toggle="tooltip"]').tooltip()
-        });
-    </script>
 </body>
 </html>
